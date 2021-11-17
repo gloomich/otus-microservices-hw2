@@ -1,0 +1,20 @@
+version: '3.4'
+
+networks:
+  userapi:
+    driver: bridge 
+
+services:
+  userapi:
+    image: ${DOCKER_REGISTRY-}userapi
+    #depends_on:
+    #  - "postgres_image"
+    build:
+      context: .
+      dockerfile: UserApi/Dockerfile
+    ports:
+      - 8080:80
+    environment:
+      - ConnectionString=Host=postgres_image;Database=users;Username=postgres;Password=qwerty;    
+    networks:
+      - userapi
