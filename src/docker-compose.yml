@@ -18,3 +18,19 @@ services:
       - ConnectionString=Host=postgres_image;Database=users;Username=postgres;Password=qwerty;    
     networks:
       - userapi
+  postgres_image:
+    image: postgres:latest
+    ports:
+      - 5432:5432
+    restart: always
+    volumes:
+      - db_volume:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: qwerty
+      POSTGRES_DB: users
+    networks:
+      - userapi
+volumes:
+  db_volume:
+    driver: local
