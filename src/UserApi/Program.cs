@@ -9,9 +9,11 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 
+var cs = builder.Configuration["ConnectionString"];
+
 builder.Services.AddHealthChecks().AddDbContextCheck<UserDbContext>();
 builder.Services.AddDbContext<UserDbContext>(opt =>
-    opt.UseNpgsql(builder.Configuration["ConnectionString"]));
+    opt.UseNpgsql(cs));
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
 builder.Services.AddHealthChecks();
@@ -59,6 +61,6 @@ app.UseEndpoints(endpoints =>
     });
 });
 
-//UserDbSeeder.Seed(app.Services);
+UserDbSeeder.Seed(app.Services);
 
 app.Run();
