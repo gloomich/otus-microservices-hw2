@@ -1,0 +1,36 @@
+version: '3.4'
+
+networks:
+  userapi:
+    driver: bridge 
+
+services:
+  userapi:
+    image: ${DOCKER_REGISTRY-}otus-microsrvs-hw2-user-api
+    depends_on:
+      - "postgres_image"
+    build:
+      context: .
+      dockerfile: UserApi/Dockerfile
+    ports:
+      - 8080:80
+    environment:
+      - ConnectionString=Host=postgres_image;Database=users;Username=andrew;Password=qwerty;    
+    networks:
+      - userapi
+  postgres_image:
+    image: postgres:latest
+    ports:
+      - 5432:5432
+    restart: always
+    volumes:
+      - otus_ap_hw2_db_volume:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: andrew
+      POSTGRES_PASSWORD: qwerty
+      POSTGRES_DB: users
+    networks:
+      - userapi
+volumes:
+  otus_ap_hw2_db_volume:
+    driver: local
