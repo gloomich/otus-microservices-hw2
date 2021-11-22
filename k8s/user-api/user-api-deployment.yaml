@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: user-api
+spec:
+  selector:
+    matchLabels:
+      app: user-api
+  replicas: 2
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+  template:
+    metadata:
+      labels:
+        app: user-api
+    spec:
+      containers:
+        - name: user-api
+          image: gloomich/otus-microsrvs-hw2-user-api:latest
+          imagePullPolicy: "Always"
+          ports:
+            - containerPort: 80
+          envFrom:
+            - configMapRef:
+                name: user-api-config
+          readinessProbe:
+            httpGet:
+              path: /health/ready
+              port: 80
+            initialDelaySeconds: 1
+            periodSeconds: 20
+          livenessProbe:
+            httpGet:
+              path: /health/live
+              port: 80
+            initialDelaySeconds: 1
+            periodSeconds: 20
+      

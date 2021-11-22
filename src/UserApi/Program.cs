@@ -9,7 +9,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 
-var cs = builder.Configuration["ConnectionString"];
+var cs = $"Host={builder.Configuration["POSTGRES_HOST"]};Database={builder.Configuration["POSTGRES_DB"]};Username={builder.Configuration["POSTGRES_USER"]};Password={builder.Configuration["POSTGRES_PASSWORD"]}";
 
 builder.Services.AddHealthChecks().AddDbContextCheck<UserDbContext>();
 builder.Services.AddDbContext<UserDbContext>(opt =>

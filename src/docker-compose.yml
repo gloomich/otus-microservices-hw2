@@ -15,7 +15,10 @@ services:
     ports:
       - 8080:80
     environment:
-      - ConnectionString=Host=postgres_image;Database=users;Username=andrew;Password=qwerty;    
+      POSTGRES_HOST: postgres_image
+      POSTGRES_USER: andrew
+      POSTGRES_PASSWORD: qwerty
+      POSTGRES_DB: users      
     networks:
       - userapi
   postgres_image:
