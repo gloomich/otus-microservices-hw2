@@ -9,7 +9,9 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 
-var cs = $"Host={builder.Configuration["POSTGRES_HOST"]};Database={builder.Configuration["POSTGRES_DB"]};Username={builder.Configuration["POSTGRES_USER"]};Password={builder.Configuration["POSTGRES_PASSWORD"]}";
+var cs = $"Host={builder.Configuration["POSTGRES_HOST"]};Port={builder.Configuration["POSTGRES_PORT"]};Database={builder.Configuration["POSTGRES_DB"]};Username={builder.Configuration["POSTGRES_USER"]};Password={builder.Configuration["POSTGRES_PASSWORD"]}";
+
+//var cs = $"Host=localhost;Database=kt_users;Username=user;Password=qwerty;";
 
 builder.Services.AddHealthChecks().AddDbContextCheck<UserDbContext>();
 builder.Services.AddDbContext<UserDbContext>(opt =>
@@ -25,11 +27,14 @@ builder.Services.AddSwaggerGen();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
+//if (app.Environment.IsDevelopment())
+//{
+//    app.UseSwagger();
+//    app.UseSwaggerUI();
+//}
+
+app.UseSwagger();
+app.UseSwaggerUI();
 
 app.MapControllers();
 
@@ -61,6 +66,6 @@ app.UseEndpoints(endpoints =>
     });
 });
 
-UserDbSeeder.Seed(app.Services);
+//UserDbSeeder.Seed(app.Services);
 
 app.Run();
