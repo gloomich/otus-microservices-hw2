@@ -44,9 +44,19 @@ app.UseAuthorization();
 
 app.UseEndpoints(endpoints =>
 {
+    endpoints.MapHealthChecks("/health/startup", new HealthCheckOptions()
+    {
+        ResultStatusCodes =
+        {
+            [HealthStatus.Healthy] = StatusCodes.Status200OK,
+            [HealthStatus.Degraded] = StatusCodes.Status503ServiceUnavailable,
+            [HealthStatus.Unhealthy] = StatusCodes.Status503ServiceUnavailable
+        }
+    });
     //A failed liveness probe says: The application has crashed. You should shut it down and restart.
     endpoints.MapHealthChecks("/health/live", new HealthCheckOptions()
     {
+        Predicate = _ => false,
         ResultStatusCodes =
         {
             [HealthStatus.Healthy] = StatusCodes.Status200OK,
@@ -57,6 +67,7 @@ app.UseEndpoints(endpoints =>
     //A failed readiness probe says: The application is OK but not yet ready to serve traffic.
     endpoints.MapHealthChecks("/health/ready", new HealthCheckOptions()
     {
+        Predicate = _ => false,
         ResultStatusCodes =
         {
             [HealthStatus.Healthy] = StatusCodes.Status200OK,
