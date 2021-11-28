@@ -2,6 +2,12 @@ using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using UserApi.DataAccess;
 
+if (args.Contains("-m"))
+{
+    DbExtensions.RunMigrations(args);
+    return;
+}
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.

@@ -29,8 +29,8 @@ services:
     volumes:
       - otus_ap_hw2_db_volume:/var/lib/postgresql/data
     environment:
-      POSTGRES_USER: andrew
-      POSTGRES_PASSWORD: qwerty
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: passwd
       POSTGRES_DB: users
     networks:
       - userapi
