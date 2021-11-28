@@ -1,5 +1,4 @@
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using UserApi.DataAccess;
 
@@ -9,16 +8,9 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 
-var cs = $"Host={builder.Configuration["POSTGRES_HOST"]};Port={builder.Configuration["POSTGRES_PORT"]};Database={builder.Configuration["POSTGRES_DB"]};Username={builder.Configuration["POSTGRES_USER"]};Password={builder.Configuration["POSTGRES_PASSWORD"]}";
-
-//var cs = $"Host=localhost;Database=kt_users;Username=user;Password=qwerty;";
-
-builder.Services.AddHealthChecks().AddDbContextCheck<UserDbContext>();
-builder.Services.AddDbContext<UserDbContext>(opt =>
-    opt.UseNpgsql(cs));
-builder.Services.AddDatabaseDeveloperPageExceptionFilter();
-
 builder.Services.AddHealthChecks();
+
+DbExtensions.UseUserDb(builder.Services, builder.Configuration);
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -76,7 +68,5 @@ app.UseEndpoints(endpoints =>
         }
     });
 });
-
-//UserDbSeeder.Seed(app.Services);
 
 app.Run();
