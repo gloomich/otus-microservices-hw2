@@ -25,6 +25,13 @@ spec:
       serviceAccountName: {{ include "otus-microsrv-hw2.serviceAccountName" . }}
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      initContainers:
+      - name: "{{ .Chart.Name }}-init"
+        image: "groundnuty/k8s-wait-for:v1.3"
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        args: 
+        - "job"
+        - {{ include "otus-microsrv-hw2.fullname" . }}-{{ .Release.Revision }}
       containers:
         - name: {{ .Chart.Name }}
           securityContext:
@@ -60,7 +67,7 @@ spec:
             - configMapRef:
                  name: hw2-config 
             - secretRef:
-                 name: hw2-secret
+                 name: hw2-secrets
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}

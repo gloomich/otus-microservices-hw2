@@ -6,9 +6,13 @@ replicaCount: 1
 
 image:
   repository: gloomich/otus-microsrvs-hw2-user-api
-  pullPolicy: IfNotPresent
+  pullPolicy: Always
   # Overrides the image tag whose default is the chart appVersion.
   tag: ""
+
+job:
+    ## Should the job be rescheduled on the same node if it fails, or just stopped
+    restartPolicy: Never
 
 imagePullSecrets: []
 nameOverride: ""
@@ -16,12 +20,12 @@ fullnameOverride: ""
 
 serviceAccount:
   # Specifies whether a service account should be created
-  create: false
+  create: true
   # Annotations to add to the service account
   annotations: {}
   # The name of the service account to use.
   # If not set and create is true, a name is generated using the fullname template
-  name: ""
+  name: "sa-migration"
 
 #podAnnotations: {}          
 
@@ -83,9 +87,17 @@ tolerations: []
 affinity: {}
 
 postgresql:
-  enabled: true
-  postgresqlUsername: myuser
-  postgresqlPassword: passwd
-  postgresqlDatabase: users
+  enabled: true  
+  postgresqlDatabase: "users"
+  postgresqlUsername: "postgres"
+  postgresqlPassword: "postgres"
   service:
     port: "5432"
+  commonLabels: 
+    job-waiting: "pg-waiting-anchor"
+  serviceAccount:
+    enabled: true
+    name: "sa-migration"
+    autoMount: true
+  persistence:
+    size: 1Gi

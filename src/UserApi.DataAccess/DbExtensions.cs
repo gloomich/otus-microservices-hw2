@@ -9,12 +9,11 @@ namespace UserApi.DataAccess
     {
         public static string ParseConnectionString(this IConfiguration configuration)
         {
-            //var cs = $"Host=localhost;Database=kt_users;Username=user;Password=qwerty;";
-            return $"Host={configuration["POSTGRES_HOST"]};" +
-                $"Port={configuration["POSTGRES_PORT"]};" +
-                $"Database={configuration["POSTGRES_DB"]};" +
-                $"Username={configuration["POSTGRES_USER"]};" +
-                $"Password={configuration["POSTGRES_PASSWORD"]}";
+            return $"Host={configuration["postgresql-host"]};" +
+                $"Port={configuration["postgresql-port"]};" +
+                $"Database={configuration["postgresql-db"]};" +
+                $"Username={configuration["postgresql-user"]};" +
+                $"Password={configuration["postgresql-password"]}";
         }
 
         public static void RunMigrations(string[] args)
@@ -35,8 +34,7 @@ namespace UserApi.DataAccess
         }
 
         public static IServiceCollection UseUserDb(this IServiceCollection services, IConfiguration configuration)
-        {
-            services.AddHealthChecks().AddDbContextCheck<UserDbContext>();
+        {            
             services.AddDbContext<UserDbContext>(opt =>
                 opt.UseNpgsql(configuration.ParseConnectionString()));
             services.AddDatabaseDeveloperPageExceptionFilter();
