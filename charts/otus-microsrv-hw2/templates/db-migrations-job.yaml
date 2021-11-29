@@ -1,0 +1,32 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ include "otus-microsrv-hw2.fullname" . }}-{{ .Release.Revision }}
+  labels:
+    {{- include "otus-microsrv-hw2.labels" . | nindent 4 }}
+spec:
+  backoffLimit: 10
+  template:
+    metadata:
+      labels:
+        {{- include "otus-microsrv-hw2.selectorLabels" . | nindent 8 }}
+    spec:
+      serviceAccountName: {{ include "otus-microsrv-hw2.serviceAccountName" . }} 
+      initContainers:
+      - name: {{ .Chart.Name }}-job-init-wait-postgres
+        image: "groundnuty/k8s-wait-for:v1.3"
+        args:
+        - "pod"
+        - "-ljob-waiting=pg-waiting-anchor"	     
+      containers:
+      - name: {{ .Chart.Name }}-job        
+        image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        command: ["dotnet"]
+        args: ["UserApi.dll", "-m"]
+        envFrom:
+            - configMapRef:
+                 name: hw2-config 
+            - secretRef:
+                 name: hw2-secrets
+      restartPolicy: {{ .Values.job.restartPolicy }}

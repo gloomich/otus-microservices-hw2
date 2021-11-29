@@ -1,0 +1,23 @@
+{{- $dbPasswordValue := .Values.postgresql.postgresqlPassword | b64enc | quote  }}
+{{- $secret := (lookup "v1" "Secret" .Release.Namespace "hw2-secrets") }}
+{{- if $secret }}
+{{- $dbPasswordValue = index $secret.data "postgresql-password" }}
+{{- end -}}
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: hw2-config
+data: 
+  postgresql-host: {{ (include "postgresql.fullname" .) | quote }}
+  postgresql-port: {{ .Values.postgresql.service.port | quote }}
+  postgresql-db: {{ .Values.postgresql.postgresqlDatabase | quote }}
+  postgresql-user: {{ .Values.postgresql.postgresqlUsername | quote }}
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: hw2-secrets
+type: Opaque
+data:
+  postgresql-password: {{ $dbPasswordValue }}

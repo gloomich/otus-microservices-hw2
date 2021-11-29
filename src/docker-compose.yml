@@ -15,7 +15,11 @@ services:
     ports:
       - 8080:80
     environment:
-      - ConnectionString=Host=postgres_image;Database=users;Username=andrew;Password=qwerty;    
+      postgresql-host: postgres_image
+      postgresql-port: 5432
+      postgresql-db: users
+      postgresql-user: postgres
+      postgresql-password: postgres
     networks:
       - userapi
   postgres_image:
@@ -26,9 +30,9 @@ services:
     volumes:
       - otus_ap_hw2_db_volume:/var/lib/postgresql/data
     environment:
-      POSTGRES_USER: andrew
-      POSTGRES_PASSWORD: qwerty
       POSTGRES_DB: users
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres      
     networks:
       - userapi
 volumes:
